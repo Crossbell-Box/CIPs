@@ -169,6 +169,7 @@ type NoteMeatadata = {
         url?: string;
         mime_type?: string;
         size_in_bytes?: number;
+        spoiler?: boolean; // The spoiler indicator for medias. Defaults to false.
     }[];
 
 		appId?: string;
