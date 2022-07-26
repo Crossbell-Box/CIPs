@@ -13,11 +13,12 @@ Crossbell is an open platfrom that needs to iterate and grow. CIPs should descri
 
 ## EIP Types
 
-There are three types of EIP:
+There are two types of EIP:
 
-- A **Standards Track EIP** 
-
-- A **Meta EIP** 
-
-- An **Informational EIP** 
+- A **Standards Track EIP** describes primary changes of Crossbell that affects most or all Crossbell implementations, including protocol changes, application changes and changes in nework configuartions.
+  Furthermore, Standards Track EIPs can be broken down into the following categories:
+  - **Protocol**: includes improvements and modifications in protocols, mostly in the form of smart contracts modifications and additions.
+  - **Networking**: includes modifications in network configuarations, such as—a change to the block gas rules and a modification of consensus mechanism.
+  - **Application** launches of new applications. 
+- A **Meta EIP** include procedures, guidelines, changes to the decision-making process.
 
