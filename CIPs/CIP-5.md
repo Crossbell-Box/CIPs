@@ -160,33 +160,33 @@ Another example with proof of connected accounts is:
 
 ```tsx
 type NoteMeatadata = {
-	scheme: "csb-note";
     tags?: string[];
     title?: string;
+    type?: "note" | "linklist" | "character"
     content?: string; // In markdown format 
-
-    media?: {
-        url?: string;
-        mime_type?: string;
-        size_in_bytes?: number;
-        spoiler?: boolean; // The spoiler indicator for medias. Defaults to false.
-    }[];
-
-		appId?: string;
-		appVersion?: string;
+    content_warning?: "nsfw" | "sensitive" | "spoiler"
+    attachments?: ([NoteMetadataAttachmentBase]<"address"> | [NoteMetadataAttachmentBase]<"content">)[]
+    attributes?: { 
+        display_type?: "string" | "number" | "boolean" | "date"
+        trait_type?: string; value: null | string | number | boolean 
+    }[]
+    external_urls?: string[]
+    sources?: string[]
+    date_published?: string
 };
 ```
+For long content, we suggest packing all content with markdown format in `title` and `content` attribute. For short content, like Twitter or Instagram style content, it’s suggested to use `content` and save attached images/videos in `attachments`.
 
-For long content, we suggest packing all content with markdown format in `title` and `content` attribute. For short content, like Twitter or Instagram style content, it’s suggested to use `content` and save attached images/videos in `media`.
+To make it clear, the `external_urls` here could be the third party urls where the notes are synced from, like when users sync posts on xLog, the `external_urls` should be urls of the original xLog posts, but when users post comments on other urls, for example a comment on someone's tweets, the urls of the tweets should be put as `targetUri`.
 
 Here’s an example:
 
 ```tsx
 {
-    "tags": ["Misc"],
-    "title": "Start From Here",
+    "tags": ['article', 'dairy'],
+    "title": "My Thoughts Start From Here",
     "content": "So boring the story is.\n\nSo boring that I don’t want to know the next.",
-    "appId": "CrossSync",
-    "appVersion": "1.0.0"
+    "external_urls": ['https://xlog.app/xxxxxx'],
+    "sources": ['xlog']
 }
 ```
