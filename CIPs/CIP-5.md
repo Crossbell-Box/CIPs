@@ -53,7 +53,7 @@ type MediaURIx extends URIx = {
 type MediaURI = MediaURIx | BaseURI;
 
 type AccountURIx extends URIx = {
-		extra?: any; // propabably used for proof 
+		extra?: any; // probably used for proof 
 }
 type AccountURI = AccountURIx | BaseURI;
 
@@ -64,7 +64,7 @@ type AssetURI = AssetURIx | BaseURI;
 
 type URI = URIx | BaseURI;
 
-type CharacterMeatadata = {
+type CharacterMetadata = {
 	type: "csb-character"; //TODO
     name?: string;
     avatars?: MediaURI[]; 
@@ -159,7 +159,7 @@ Another example with proof of connected accounts is:
 ## Note Metadata
 
 ```tsx
-type NoteMeatadata = {
+type NoteMetadata = {
     tags?: string[];
     title?: string;
     type?: "note" | "linklist" | "character"
@@ -188,5 +188,38 @@ Here’s an example:
     "content": "So boring the story is.\n\nSo boring that I don’t want to know the next.",
     "external_urls": ['https://xlog.app/xxxxxx'],
     "sources": ['xlog']
+}
+```
+
+## Achievement Metadata
+
+```tsx
+type AchievementMeatadata = {
+    name?: string;
+    description?: string;
+    image?: string;
+    attributes?: { 
+        tier?: "string"
+    }[]
+};
+```
+
+Achievements are released by crossbell.io as Character-Bound-Token NFTs to celebrate and showcase your journey on Crossbell, giving you a chance to show off your experiences and accomplishments. Detailed rules and specifications will be released on crossbell.io soon.
+
+`name` here is the title of your achievement, e.g. `talking point` or `influencer`. `tier` indicates version of your achievement, which could be `base`, `bronze`, `silver`, `gold` or `special`.
+
+Here’s an example:
+
+
+Here’s an example:
+
+```tsx
+{
+    "name": "talking point",
+    "description": "I got 10 comments/likes on Crossbell!",
+    "image": "ipfs://xxx",
+    "attributes": [{
+        "tier": "bronze"
+    }]
 }
 ```
