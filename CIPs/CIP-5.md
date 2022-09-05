@@ -226,7 +226,7 @@ Here’s an example:
 {
     "name": "talking point",
     "description": "I got 10 comments/likes on Crossbell! Check https://xxx for details.",
-    "media": [{"ipfs://QmNks3cJWDXzG5WSBzTVv1regkhXhzChK6LhJYu1HiBLS2"}],
+    "media": ["ipfs://QmNks3cJWDXzG5WSBzTVv1regkhXhzChK6LhJYu1HiBLS2"],
     "attributes": [
     {
         "tier": "bronze"
