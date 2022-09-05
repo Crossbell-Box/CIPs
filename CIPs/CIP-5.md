@@ -43,22 +43,22 @@ The specification defined in TypeScript is as follows:
 ```tsx
 type BaseURI = string; // as URI defined in RFC 3986.
 type URIx = {
-		uri: BaseURI;
-		extensions?: [];
+    uri: BaseURI;
+    extensions?: [];
 }; 
 type MediaURIx extends URIx = {
-		mime_type?: string; 
-		size_in_bytes?: number;
+    mime_type?: string; 
+    size_in_bytes?: number;
 }
 type MediaURI = MediaURIx | BaseURI;
 
 type AccountURIx extends URIx = {
-		extra?: any; // probably used for proof 
+    extra?: any; // probably used for proof 
 }
 type AccountURI = AccountURIx | BaseURI;
 
 type AssetURIx extends URIx = {
-		cached_resource?: string;
+    cached_resource?: string;
 }
 type AssetURI = AssetURIx | BaseURI;
 
@@ -196,12 +196,12 @@ Here’s an example:
 ```tsx
 type BaseURI = string; // as URI defined in RFC 3986.
 type URIx = {
-		uri: BaseURI;
-		extensions?: [];
+    uri: BaseURI;
+    extensions?: [];
 }; 
 type MediaURIx extends URIx = {
-		mime_type?: string; 
-		size_in_bytes?: number;
+    mime_type?: string; 
+    size_in_bytes?: number;
 }
 type MediaURI = MediaURIx | BaseURI;
 
@@ -224,13 +224,9 @@ Here’s an example:
 
 ```tsx
 {
-
     "name": "talking point",
     "description": "I got 10 comments/likes on Crossbell! Check https://xxx for details.",
-    "media": [{
-        mime_type?: string; 
-		size_in_bytes?: number;
-    }]
+    "media": [{"ipfs://QmNks3cJWDXzG5WSBzTVv1regkhXhzChK6LhJYu1HiBLS2"}],
     "attributes": [
     {
         "tier": "bronze"
