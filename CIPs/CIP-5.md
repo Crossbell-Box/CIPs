@@ -191,35 +191,54 @@ Here’s an example:
 }
 ```
 
-## Achievement Metadata
+# Achievement Metadata
 
 ```tsx
-type AchievementMeatadata = {
+type BaseURI = string; // as URI defined in RFC 3986.
+type URIx = {
+		uri: BaseURI;
+		extensions?: [];
+}; 
+type MediaURIx extends URIx = {
+		mime_type?: string; 
+		size_in_bytes?: number;
+}
+type MediaURI = MediaURIx | BaseURI;
+
+type AchievementMetadata = {
     name?: string;
     description?: string;
-    image?: string;
+    media?: MediaURI[];
     attributes?: { 
         tier?: "string"
+        trait_type?: string; value: null | string | number | boolean 
     }[]
 };
 ```
 
-Achievements are released by crossbell.io as Character-Bound-Token NFTs to celebrate and showcase your journey on Crossbell, giving you a chance to show off your experiences and accomplishments. Detailed rules and specifications will be released on crossbell.io soon.
+Achievements are released by crossbell.io as Character-Bound-Token NFTs to celebrate and showcase your journey on Crossbell, giving you a chance to show off your experiences and accomplishments. Detailed rules and specifications will be released on crossbell.io soon. Furthermore, achievements for applications will also be supported in the near future, which means applications on Crossbell will also be able to deploy their own achievement contracts, and it's suggested to use the same metadata format as following.
 
-`name` here is the title of your achievement, e.g. `talking point` or `influencer`. `tier` indicates version of your achievement, which could be `base`, `bronze`, `silver`, `gold` or `special`.
-
-Here’s an example:
-
+`name` here is the title of your achievement, e.g. `talking point` or `influencer`. `description` could contain the rules of that achievement or a link directed to detailed information. `tier` indicates version of your achievement, which could be `base`, `bronze`, `silver`, `gold` or `special`. Additionally, `trait_type` is for additional information, for example, you can add `published date` trait_type or `authors` as you need.
 
 Here’s an example:
 
 ```tsx
 {
+
     "name": "talking point",
-    "description": "I got 10 comments/likes on Crossbell!",
-    "image": "ipfs://xxx",
-    "attributes": [{
-        "tier": "bronze"
+    "description": "I got 10 comments/likes on Crossbell! Check https://xxx for details.",
+    "media": [{
+        mime_type?: string; 
+		size_in_bytes?: number;
     }]
+    "attributes": [
+    {
+        "tier": "bronze"
+    },
+    {
+        "trait_type": "published date",
+        "value": "1546360800"
+    }
+    ]
 }
 ```
