@@ -640,6 +640,47 @@ function postNote4AnyUri(DataTypes.PostNoteData calldata postNoteData, string ca
 
 This function posts a note on any uri.
 
+### setOperator()
+
+```jsx
+function setOperator(uint256 characterId, address operator) external 
+```
+
+| Struct Member Name | Type | Description |
+| --- | --- | --- |
+| characterId | uint256 | The characterId to post the new note |
+| operator | address | The operator address you want to authorize |
+
+This function sets an address as a character's operator.
+| WARNING: `setOperator` has been deprecated, use `addOperator` and `removeOperator` instead! |
+| --- |
+
+### addOperator()
+
+```jsx
+function addOperator(uint256 characterId, address operator) external
+```
+
+| Struct Member Name | Type | Description |
+| --- | --- | --- |
+| characterId | uint256 | The characterId to post the new note |
+| operator | address | The operator address you want to authorize |
+
+This function add an address to a character's operator list.
+
+### removeOperator()
+
+```jsx
+function removeOperator(uint256 characterId, address operator) external
+```
+
+| Struct Member Name | Type | Description |
+| --- | --- | --- |
+| characterId | uint256 | The characterId to post the new note |
+| operator | address | The operator address you want to authorize |
+
+This function remove an address from a character's operator list.
+
 ## View Functions
 
 ### getPrimaryCharacterId()
@@ -938,6 +979,44 @@ function getLinklistContract() external view returns (address)
 ```
 
 This function returns the linklist contract address.
+
+### isOperator()
+
+```jsx
+function isOperator(uint256 characterId, address operator)
+    external
+    view
+    override
+    returns (bool)
+```
+
+Returns
+
+| Type | Description |
+| --- | --- |
+| bool | Whether an address is an operator of the character |
+
+| NOTICE: `isOperator()` is compatible with `setOperator()`, which means checking addresses set by `setOperator` will also returns true. |
+| --- |
+
+### getOperators()
+
+```jsx
+function getOperators(uint256 characterId) 
+    external 
+    view 
+    override 
+    returns (address[] memory) 
+```
+
+Returns
+
+| Type | Description |
+| --- | --- |
+| address[] | Operator list of the character |
+
+| NOTICE: `getOperators()` is NOT compatible with `setOperator()`, which means `getOperators()` doesn't return addresses set by `setOperator()`. |
+| --- |
 
 # Periphery.sol
 
