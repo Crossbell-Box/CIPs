@@ -56,7 +56,7 @@ For XSync and XLog, we have preset some default permission bitmaps. When user in
 | ···           |                               | Owner Reserve             |
 |  [21, 175]    | reserved for future           |                           |
 | 176           | SET_CHARACTER_URI             | Operator Sign             |
-| 177           | SET_LINK_LIST_URI             | Operator Sign             |
+| 177           | SET_LINKLIST_URI             | Operator Sign             |
 | 178           | LINK_CHARACTER                | Operator Sign             |
 | 179           | UNLINK_CHARACTER              | Operator Sign             |
 | 180           | CREATE_THEN_LINK_CHARACTER    | Operator Sign             |
@@ -66,23 +66,23 @@ For XSync and XLog, we have preset some default permission bitmaps. When user in
 | 184           | UNLINK_ERC721                 | Operator Sign             |
 | 185           | LINK_ADDRESS                  | Operator Sign             |
 | 186           | UNLINK_ADDRESS                | Operator Sign             |
-| 187           | LINK_ANY_URI                  | Operator Sign             |
-| 188           | UNLINK_ANY_URI                | Operator Sign             |
-| 189           | LINK_LINK_LIST                | Operator Sign             |
-| 190           | UNLINK_LINK_LIST              | Operator Sign             |
+| 187           | LINK_ANYURI                  | Operator Sign             |
+| 188           | UNLINK_ANYURI                | Operator Sign             |
+| 189           | LINK_LINKLIST                | Operator Sign             |
+| 190           | UNLINK_LINKLIST              | Operator Sign             |
 | 191           | SET_LINK_MODULE_FOR_CHARACTER | Operator Sign             |
 | 192           | SET_LINK_MODULE_FOR_NOTE      | Operator Sign             |
-| 193           | SET_LINK_MODULE_FOR_LINK_LIST | Operator Sign             |
+| 193           | SET_LINK_MODULE_FOR_LINKLIST | Operator Sign             |
 | 194           | SET_MINT_MODULE_FOR_NOTE      | Operator Sign             |
 | 195           | SET_NOTE_URI                  | Operator Sign             |
 | 196           | LOCK_NOTE                     | Operator Sign             |
 | 197           | DELETE_NOTE                   | Operator Sign             |
 | 198           | POST_NOTE_FOR_CHARACTER       | Operator Sign             |
 | 199           | POST_NOTE_FOR_ADDRESS         | Operator Sign             | 
-| 200           | POST_NOTE_FOR_LINK_LIST       | Operator Sign             |
+| 200           | POST_NOTE_FOR_LINKLIST       | Operator Sign             |
 | 201           | POST_NOTE_FOR_NOTE            | Operator Sign             |
 | 202           | POST_NOTE_FOR_ERC721          | Operator Sign             |
-| 203           | POST_NOTE_FOR_ANY_URI         | Operator Sign             |
+| 203           | POST_NOTE_FOR_ANYURI         | Operator Sign             |
 | ···           |                               | Operator Sign             |
 | 236           | POST_NOTE                     | Operator Sync             |
 | ···           |                               | Operator Sync             |
