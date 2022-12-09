@@ -45,6 +45,7 @@ function grantOperatorPermissions4Note(
 
 Furthermore, notes are open to all operators who are granted with note permissions by default, until the Permissions4Note are set which means users can specify operators’ permission over a specific note. Imagine a scenario where you’re a KOL having millions of followers on CrossBell and you’ve made a rough outlined draft about your vision of ‘CrossBell is the future’ but you don’t really had the time to take care of things here and there, so you have to ask 2 of your employees as  to polish your draft. With CIP-7, you can tackle with this easily: 1. Post your draft as a note. 2. Add your employees as operator and grant them with `setNoteUri` permission using `grantOperatorPermissions`. 3. Grant your employees permission over your draft note with `grantOperatorPermissions`. 
 
+For XSync and XLog, we have preset some default permission bitmaps. When user interacts with XSync and XLog, these permissions will be used by default, but always remember that you can set them freely by calling Web3Entry Contract directly.
 
 ### Operator Permission Bitmap Layout
 | Permission ID | Method                        | Suggested Permission Type |
@@ -95,5 +96,48 @@ Furthermore, notes are open to all operators who are granted with note permissio
 | 3             | NOTE_LOCK_NOTE                |
 | 4             | NOTE_DELETE_NOTE              |
 
+### Default Permission Bitmap
+
+|  Permission   | Bitmap             | description                                      |
+|---------------|--------------------|--------------------------------------------------|
+| Operator Sync | ~uint256(0) << 236 | grant all operator sync permissions              |
+| Operator Sign | ~uint256(0) << 176 | grant all operator sign permissions              |
+| Owner Reserve | ~uint256(0) << 20  | grant all permissions except owner reserved ones |
+
+
 | :point_up:  Suggested Permission Type is for references only, users can customize freely   |
 |-----------------------------------------|
+
+## Backwards Compatibility
+
+We have done some necessary compatibility work for this upgrade. All operators previously set using the `set operator` interface have been migrated and granted default Operator Sign permissions. For apps that uses old interfaces, we will keep the old interface for a while until all apps have successfully upgraded, , giving apps more time to adjust.
+
+migrate interface:
+
+```solidity
+    /**
+     * @notice Migrates operators permissions to operatorsSignBitMap
+     * @param characterIds List of characters to migrate.
+     * @dev `addOperator`, `removeOperator`, `setOperator` will all be deprecated soon. We recommend to use
+     *  `migrateOperator` to grant OPERATOR_SIGN_PERMISSION_BITMAP to all previous operators.
+     */
+    function migrateOperator(uint256[] calldata characterIds) external {
+        // set default permissions bitmap
+        for (uint256 i = 0; i < characterIds.length; ++i) {
+            uint256 characterId = characterIds[i];
+            address operator = _operatorByCharacter[characterId];
+            if (operator != address(0)) {
+                _setOperatorPermissions(characterId, operator, OP.OPERATOR_SIGN_PERMISSION_BITMAP);
+            }
+
+            address[] memory operators = _operatorsByCharacter[characterId].values();
+            for (uint256 j = 0; j < operators.length; ++j) {
+                _setOperatorPermissions(
+                    characterId,
+                    operators[j],
+                    OP.OPERATOR_SIGN_PERMISSION_BITMAP
+                );
+            }
+        }
+    }
+```
