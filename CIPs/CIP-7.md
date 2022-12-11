@@ -11,20 +11,21 @@ A general design to get fine-grained access control over operators.
 
 ## Abstract
 
-On CrossBell, operators are authorities that users trust and set for their characters to send transactions on behalf of themselves so as to avoiding the hassle of signing transactions every time. But it goes both ways, when you add an address as your operator, this operator can perform a range of social acts in your name, which means if operators become evil someday(which is a virtual impossibility, but we always make the worst assumptions in the dark forest), your social wealth and reputation will be at stake. Considering this problem, we should restrict operators’ access to the minimum extent in every different scenarios.
+On Crossbell, operators are authorities that users trust and set for their characters to send transactions on behalf of themselves so as to avoiding the hassle of signing transactions every time. But it goes both ways, when you add an address as your operator, this operator can perform a range of social acts in your name, which means if operators become evil someday(which is a virtual impossibility, but we always make the worst assumptions in the dark forest), your social wealth and reputation will be at stake. Considering this problem, we should restrict operators’ access to the minimum extent in every different scenarios.
 
 ## Motivation
 Defining operators’ permission for each of social actions in Web3Entry for different use cases in order to limit operators’ access to the minimum extent and avoid over delegation or abuse of authority.
 
 ## Specification
 
-In the last version of release, you can simply add or remove operators using these two methods below:
+In the [release v2.2.0](https://github.com/Crossbell-Box/Crossbell-Contracts/blob/v2.2.0/contracts/Web3EntryBase.sol#L123), you can simply add or remove operators using these two methods below:
 
 ```solidity
 function addOperator(uint256 characterId, address operator) external;
 
 function removeOperator(uint256 characterId, address operator) external;
 ```
+
 
 With CIP-7, users should specify operators’ competence using a bitmap. Every bit of the bitmap stands for a corresponding method in Web3Entry. If the bit on the position is set to 1 that means the operator have access, and if it’s set to 0, that means users want to reserve this action for their own. 
 
@@ -43,9 +44,33 @@ function grantOperatorPermissions4Note(
 ) external;
 ```
 
-Furthermore, notes are open to all operators who are granted with note permissions by default, until the Permissions4Note are set which means users can specify operators’ permission over a specific note. Imagine a scenario where you’re a KOL having millions of followers on CrossBell and you’ve made a rough outlined draft about your vision of ‘CrossBell is the future’ but you don’t really had the time to take care of things here and there, so you have to ask 2 of your employees as  to polish your draft. With CIP-7, you can tackle with this easily: 1. Post your draft as a note. 2. Add your employees as operator and grant them with `setNoteUri` permission using `grantOperatorPermissions`. 3. Grant your employees permission over your draft note with `grantOperatorPermissions`. 
+Furthermore, notes are open to all operators who are granted with note permissions by default, until the Permissions4Note are set which means users can specify operators’ permission over a specific note. **So if you want to grant permission on a specific note and leaves others alone, you have to call both  `grantOperatorPermissions` and `grantOperatorPermissions4Note`.**
 
-For XSync and XLog, we have preset some default permission bitmaps. When user interacts with XSync and XLog, these permissions will be used by default, but always remember that you can set them freely by calling Web3Entry Contract directly.
+Imagine a scenario where you’re a KOL having millions of followers on Crossbell and you’ve made a rough outlined draft about your vision of ‘Crossbell is the future’ but you don’t really had the time to take care of things here and there, so you have to ask 2 of your employees as  to polish your draft. With CIP-7, you can tackle with this easily: 
+1. Post your draft as a note. 
+   ```
+   web3Entry.postNote(<your draft note data>);
+   ```
+2. Grant your employees permission over your draft note with `grantOperatorPermissions4Note`. 
+   ```
+   web3Entry.grantOperatorPermissions4Note(
+            <your character ID>,
+            <your draft note ID>,
+            <your collaborator's address>,
+            1<<195
+        );
+   ```
+3. Add your employees as operator and grant them with `setNoteUri` permission using `grantOperatorPermissions`. 
+   ```
+   web3Entry.grantOperatorPermissions(
+            <your character ID>,
+            <your collaborator's address>,
+            1<<195
+        );
+   ```
+After these three calls, your collaborators will only have the permission to modify your note（[`setNoteUri`](https://github.com/Crossbell-Box/Crossbell-Contracts/blob/852a6a4a81407906adc0f4bce151691ab2f41810/docs/libraries/PostLogic.md#setnoteuri）), but not [delete](https://github.com/Crossbell-Box/Crossbell-Contracts/blob/8b986db6258ed64d3707c8b5c413c3d3db0e9e0f/docs/interfaces/IWeb3Entry.md#deletenote) or [lock](https://github.com/Crossbell-Box/Crossbell-Contracts/blob/8b986db6258ed64d3707c8b5c413c3d3db0e9e0f/docs/interfaces/IWeb3Entry.md#locknote) it.
+
+For xSync and xLog, we have preset some default permission bitmaps. When user interacts with xSync and xLog, these permissions will be used by default, but always remember that you can set them freely by calling Web3Entry Contract directly.
 
 ### Operator Permission Bitmap Layout
 | Permission ID | Method                        | Suggested Permission Type |
