@@ -35,33 +35,47 @@ function grantOperatorPermissions(
     address operator,
     uint256 permissionBitMap
 ) external;
-
-function grantOperatorPermissions4Note(
-    uint256 characterId,
-    uint256 noteId,
-    address operator,
-    uint256 permissionBitMap
-) external;
 ```
-With the `grantOperatorPermissions` method, users can freely enable or disable operators' permissions for each method. With the `grantOperatorPermissions4Note` method, users can customize the permissions for individual notes and choose which operators have the ability to edit their notes. 
-To clarify the relationship between `OperatorPermissions` and `OperatorPermissions4Note`, the level of note permissions is above operator permissions, which means when both `OperatorPermissions` and `OperatorPermissions4Note` exist at the same time, `OperatorPermissions4Note` prevails. If you want to learn more details, you can check our [test cases](https://github.com/Crossbell-Box/Crossbell-Contracts/blob/feature/fix-naming-issue/test/Operator.t.sol#L128).
+With the `grantOperatorPermissions` method, users can freely enable or disable operators' permissions for each method. For example, users on xSync can grant operators the permission to `postNote`, and disable all irrelevant permissions.
+
+Furthermore, blacklists and whitelists allow users to customize permissions for their individual notes. Addresses in whitelists are allowed to edit(`setNoteUri`) the note and addresses in blacklist are forbidden. Users can manage their note operator whitelists and blacklists by calling 2 methods below:
+
+```solidity
+// add addresses into blacklists and whitelists
+function addOperators4Note(
+        uint256 characterId,
+        uint256 noteId,
+        address[] calldata blacklist,
+        address[] calldata whitelist
+    ) external;
+
+// remove addresses from blacklists and whitelists
+function removeOperators4Note(
+        uint256 characterId,
+        uint256 noteId,
+        address[] calldata blacklist,
+        address[] calldata whitelist
+    ) external;
+```
+
+To clarify the relationship between `OperatorPermissions` and `Operators4Note`, the level of `Operators4Note` is above operator permissions, which means when both `OperatorPermissions` and `Operators4Note` exist at the same time, `Operators4Note` prevails, and for `Operators4Note`, blacklists prevail, which means operators can't edit notes if they're in both blacklists and whitelists. If you want to learn more details, you can check our [test cases](https://github.com/Crossbell-Box/Crossbell-Contracts/blob/feature/fix-naming-issue/test/Operator.t.sol#L128).
 
 Imagine a scenario where you’re a KOL having millions of followers on Crossbell and you’ve made a rough outlined draft about your vision of ‘Crossbell is the future’ but you don’t really had the time to take care of things here and there, so you have to ask 2 of your employees as  to polish your draft. With CIP-7, you can tackle with this easily: 
 1. Post your draft as a note. 
    ```
    web3Entry.postNote(<your draft note data>);
    ```
-2. Grant your employees permission over your draft note with `grantOperatorPermissions4Note`. The permission ID of `setNoteUri` is 195.
+2. Grant your employees permission over your draft note with `addOperators4Note`.
    ```
-   web3Entry.grantOperatorPermissions4Note(
+   web3Entry.addOperators4Note(
             <your character ID>,
             <your draft note ID>,
-            <your collaborator's address>,
-            1<<195
+            <whitelist addresses array>
+            <blacklist addresses array>
         );
    ```
 
-After these two calls, your collaborators will be granted with permissions to modify your note. They can modify your note with [setNoteUri](https://github.com/Crossbell-Box/Crossbell-Contracts/blob/852a6a4a81407906adc0f4bce151691ab2f41810/docs/libraries/PostLogic.md#setnoteuri), but they can't [delete](https://github.com/Crossbell-Box/Crossbell-Contracts/blob/8b986db6258ed64d3707c8b5c413c3d3db0e9e0f/docs/interfaces/IWeb3Entry.md#deletenote) or [lock](https://github.com/Crossbell-Box/Crossbell-Contracts/blob/8b986db6258ed64d3707c8b5c413c3d3db0e9e0f/docs/interfaces/IWeb3Entry.md#locknote) it.
+After these two calls, your collaborators will be granted with permissions to modify your note by calling [setNoteUri](https://github.com/Crossbell-Box/Crossbell-Contracts/blob/852a6a4a81407906adc0f4bce151691ab2f41810/docs/libraries/PostLogic.md#setnoteuri)
 
 For xSync and xLog, we have preset some suggested permission bitmaps. When user interacts with xSync and xLog, these permissions will be used by default, but always remember that you can set them freely by calling Web3Entry directly.
 
@@ -71,11 +85,12 @@ For xSync and xLog, we have preset some suggested permission bitmaps. When user 
 | 0             | SET_HANDLE                    | Owner Reserve             |
 | 1             | SET_SOCIAL_TOKEN              | Owner Reserve             |
 | 2             | GRANT_OPERATOR_PERMISSIONS    | Owner Reserve             |
-| 3             | GRANT_OPERATOR_PERMISSIONS_FOR_NOTE    | Owner Reserve             |
+| 3             | ADD_OPERATORS_FOR_NOTE        | Owner Reserve             |
+| 4             |REMOVE_OPERATORS_FOR_NOTE      | Owner Reserve             |
 | ···           |                               | Owner Reserve             |
 |  [21, 175]    | reserved for future           |                           |
 | 176           | SET_CHARACTER_URI             | Operator Sign             |
-| 177           | SET_LINKLIST_URI             | Operator Sign             |
+| 177           | SET_LINKLIST_URI              | Operator Sign             |
 | 178           | LINK_CHARACTER                | Operator Sign             |
 | 179           | UNLINK_CHARACTER              | Operator Sign             |
 | 180           | CREATE_THEN_LINK_CHARACTER    | Operator Sign             |
@@ -106,25 +121,6 @@ For xSync and xLog, we have preset some suggested permission bitmaps. When user 
 | 236           | POST_NOTE                     | Operator Sync             |
 | ···           |                               | Operator Sync             |
 
-### Operator Permission For Note Bitmap Layout
-| Permission ID | Method                        |
-|---------------|-------------------------------|
-|      192      | SET_LINK_MODULE_FOR_NOTE |
-|      194      | SET_MINT_MODULE_FOR_NOTE |
-|      195      | SET_NOTE_URI             |
-|      196       | LOCK_NOTE                |
-|      197       | DELETE_NOTE              |
-
-| :hammer_and_pick:  `operatorPermissions4Note` using the same ID as `operatorPermissions` is just for convenience, pay attention that these are two different bitmaps.|
-|-----------------------------------------|
-
-### Default Permission Bitmap
-
-|  Permission   | Bitmap             | description                                      |
-|---------------|--------------------|--------------------------------------------------|
-| Operator Sync | ~uint256(0) << 236 | grant all operator sync permissions              |
-| Operator Sign | ~uint256(0) << 176 | grant all operator sign permissions              |
-| Owner Reserve | ~uint256(0) << 20  | grant all permissions except owner reserved ones |
 
 
 | :point_up:  Suggested Permission Type is for references only, users can customize freely   |
