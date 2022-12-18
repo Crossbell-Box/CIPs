@@ -42,7 +42,7 @@ Furthermore, blacklists and whitelists allow users to customize permissions for 
 
 ```solidity
 // add addresses into blacklists and whitelists
-function addOperators4Note(
+function grantOperators4Note(
         uint256 characterId,
         uint256 noteId,
         address[] calldata blacklist,
@@ -50,7 +50,7 @@ function addOperators4Note(
     ) external;
 
 // remove addresses from blacklists and whitelists
-function removeOperators4Note(
+function revokeOperators4Note(
         uint256 characterId,
         uint256 noteId,
         address[] calldata blacklist,
@@ -60,14 +60,14 @@ function removeOperators4Note(
 
 To clarify the relationship between `OperatorPermissions` and `Operators4Note`, the level of `Operators4Note` is above operator permissions, which means when both `OperatorPermissions` and `Operators4Note` exist at the same time, `Operators4Note` prevails, and for `Operators4Note`, blacklists prevail, which means operators can't edit notes if they're in both blacklists and whitelists. If you want to learn more details, you can check our [test cases](https://github.com/Crossbell-Box/Crossbell-Contracts/blob/feature/fix-naming-issue/test/Operator.t.sol#L128).
 
-Imagine a scenario where you’re a KOL having millions of followers on Crossbell and you’ve made a rough outlined draft about your vision of ‘Crossbell is the future’ but you don’t really had the time to take care of things here and there, so you have to ask 2 of your employees as  to polish your draft. With CIP-7, you can tackle with this easily: 
+Imagine a scenario where you’re a KOL having millions of followers on Crossbell and you’ve made a rough outlined draft about your vision of ‘Crossbell is the future’ but you don’t really had the time to take care of things here and there, so you have to ask 2 of your employees as to polish your draft. With CIP-7, you can tackle with this easily: 
 1. Post your draft as a note. 
    ```
    web3Entry.postNote(<your draft note data>);
    ```
 2. Grant your employees permission over your draft note with `addOperators4Note`.
    ```
-   web3Entry.addOperators4Note(
+   web3Entry.grantOperators4Note(
             <your character ID>,
             <your draft note ID>,
             <whitelist addresses array>
@@ -128,32 +128,34 @@ For xSync and xLog, we have preset some suggested permission bitmaps. When user 
 
 ## Backwards Compatibility
 
-We have done some necessary compatibility work for this upgrade. All operators previously set using the `set operator` interface have been migrated and granted default Operator Sign permissions. For apps that uses old interfaces, we will keep the old interface for a while until all apps have successfully upgraded, , giving apps more time to adjust.
+We have done some necessary compatibility work for this upgrade. All operators previously set using the `set operator` interface have been migrated and granted default Operator Sign permissions. For apps that uses old interfaces, we will keep the old interface for a while until all apps have successfully upgraded, giving apps more time to adjust.
 
 migrate interface:
 
 ```solidity
     /**
-     * @notice Migrates operators permissions to operatorsSignBitMap
+     * @notice Migrates old operators permissions.
      * @param characterIds List of characters to migrate.
-     * @dev `addOperator`, `removeOperator`, `setOperator` will all be deprecated soon. We recommend to use
-     *  `migrateOperator` to grant OPERATOR_SIGN_PERMISSION_BITMAP to all previous operators.
+     * @dev set operators of newbieVilla DEFAULT_PERMISSION, and others OPERATOR_SYNC_PERMISSION.
+     * This function should be removed in the next release.
      */
-    function migrateOperator(uint256[] calldata characterIds) external {
-        // set default permissions bitmap
+    function migrateOperator(address newbieVilla, uint256[] calldata characterIds) external {
+        ......
         for (uint256 i = 0; i < characterIds.length; ++i) {
             uint256 characterId = characterIds[i];
-            address operator = _operatorByCharacter[characterId];
-            if (operator != address(0)) {
-                _setOperatorPermissions(characterId, operator, OP.OPERATOR_SIGN_PERMISSION_BITMAP);
-            }
+            address characterOwner = ownerOf(characterId);
+            uint256 permissionBitMap = (characterOwner == newbieVilla)
+                ? OP.DEFAULT_PERMISSION_BITMAP
+                : OP.POST_NOTE_PERMISSION_BITMAP;
 
             address[] memory operators = _operatorsByCharacter[characterId].values();
             for (uint256 j = 0; j < operators.length; ++j) {
-                _setOperatorPermissions(
+                OperatorLogic.grantOperatorPermissions(
                     characterId,
                     operators[j],
-                    OP.OPERATOR_SIGN_PERMISSION_BITMAP
+                    permissionBitMap,
+                    _operatorsByCharacter,
+                    _operatorsPermissionBitMap
                 );
             }
         }
