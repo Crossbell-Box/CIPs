@@ -26,7 +26,6 @@ function addOperator(uint256 characterId, address operator) external;
 function removeOperator(uint256 characterId, address operator) external;
 ```
 
-
 With CIP-7, users should specify operators’ competence using a bitmap. Every bit of the bitmap stands for a corresponding method in Web3Entry. If the bit on the position is set to 1 that means the operator have access, and if it’s set to 0, that means users want to reserve this action for their own. 
 
 ```solidity
@@ -38,40 +37,33 @@ function grantOperatorPermissions(
 ```
 With the `grantOperatorPermissions` method, users can freely enable or disable operators' permissions for each method. For example, users on xSync can grant operators the permission to `postNote`, and disable all irrelevant permissions.
 
-Furthermore, blacklists and whitelists allow users to customize permissions for their individual notes. Addresses in whitelists are allowed to edit(`setNoteUri`) the note and addresses in blacklist are forbidden. Users can manage their note operator whitelists and blacklists by calling 2 methods below:
+Furthermore, blocklists and allowlists allow users to customize permissions for their individual notes. Addresses in allowlists are allowed to edit(`setNoteUri`) the note and addresses in blocklist are forbidden. Users can manage their note operator allowlists and blocklists by calling 2 methods below:
 
 ```solidity
-// add addresses into blacklists and whitelists
+// add addresses into blocklists and allowlists
 function grantOperators4Note(
         uint256 characterId,
         uint256 noteId,
-        address[] calldata blacklist,
-        address[] calldata whitelist
+        address[] calldata blocklist,
+        address[] calldata allowlist
     ) external;
 
-// remove addresses from blacklists and whitelists
-function revokeOperators4Note(
-        uint256 characterId,
-        uint256 noteId,
-        address[] calldata blacklist,
-        address[] calldata whitelist
-    ) external;
 ```
 
-To clarify the relationship between `OperatorPermissions` and `Operators4Note`, the level of `Operators4Note` is above operator permissions, which means when both `OperatorPermissions` and `Operators4Note` exist at the same time, `Operators4Note` prevails, and for `Operators4Note`, blacklists prevail, which means operators can't edit notes if they're in both blacklists and whitelists. If you want to learn more details, you can check our [test cases](https://github.com/Crossbell-Box/Crossbell-Contracts/blob/feature/fix-naming-issue/test/Operator.t.sol#L128).
+To clarify the relationship between `OperatorPermissions` and `Operators4Note`, the level of `Operators4Note` is above operator permissions, which means when both `OperatorPermissions` and `Operators4Note` exist at the same time, `Operators4Note` prevails, and for `Operators4Note`, blocklists prevail, which means operators can't edit notes if they're in both blocklists and allowlists. If you want to learn more details, you can check our [test cases](https://github.com/Crossbell-Box/Crossbell-Contracts/blob/main/test/Operator.t.sol#L196) or [contract](https://github.com/Crossbell-Box/Crossbell-Contracts/blob/main/contracts/Web3Entry.sol#L106).
 
 Imagine a scenario where you’re a KOL having millions of followers on Crossbell and you’ve made a rough outlined draft about your vision of ‘Crossbell is the future’ but you don’t really had the time to take care of things here and there, so you have to ask 2 of your employees as to polish your draft. With CIP-7, you can tackle with this easily: 
 1. Post your draft as a note. 
    ```
    web3Entry.postNote(<your draft note data>);
    ```
-2. Grant your employees permission over your draft note with `addOperators4Note`.
+2. Add your employee into the allowlist of your draft note by calling `grantOperators4Note`.
    ```
    web3Entry.grantOperators4Note(
             <your character ID>,
             <your draft note ID>,
-            <whitelist addresses array>
-            <blacklist addresses array>
+            <allowlist addresses array>
+            <blocklist addresses array>
         );
    ```
 
@@ -85,8 +77,7 @@ For xSync and xLog, we have preset some suggested permission bitmaps. When user 
 | 0             | SET_HANDLE                    | Owner Reserve             |
 | 1             | SET_SOCIAL_TOKEN              | Owner Reserve             |
 | 2             | GRANT_OPERATOR_PERMISSIONS    | Owner Reserve             |
-| 3             | ADD_OPERATORS_FOR_NOTE        | Owner Reserve             |
-| 4             |REMOVE_OPERATORS_FOR_NOTE      | Owner Reserve             |
+| 3             | GRANT_OPERATORS_FOR_NOTE      | Owner Reserve             |
 | ···           |                               | Owner Reserve             |
 |  [21, 175]    | reserved for future           |                           |
 | 176           | SET_CHARACTER_URI             | Operator Sign             |
@@ -134,28 +125,21 @@ migrate interface:
 
 ```solidity
     /**
-     * @notice Migrates old operators permissions.
+     * @notice Migrates operators permissions to operatorsSignBitMap
      * @param characterIds List of characters to migrate.
-     * @dev set operators of newbieVilla DEFAULT_PERMISSION, and others OPERATOR_SYNC_PERMISSION.
-     * This function should be removed in the next release.
+     * @dev `addOperator`, `removeOperator`, `setOperator` will all be deprecated soon. We recommend to use
+     *  `migrateOperator` to grant OPERATOR_SIGN_PERMISSION_BITMAP to all previous operators.
      */
-    function migrateOperator(address newbieVilla, uint256[] calldata characterIds) external {
-        ......
+    function migrateOperator(uint256[] calldata characterIds) external {
+        // set default permissions bitmap
         for (uint256 i = 0; i < characterIds.length; ++i) {
             uint256 characterId = characterIds[i];
-            address characterOwner = ownerOf(characterId);
-            uint256 permissionBitMap = (characterOwner == newbieVilla)
-                ? OP.DEFAULT_PERMISSION_BITMAP
-                : OP.POST_NOTE_PERMISSION_BITMAP;
-
             address[] memory operators = _operatorsByCharacter[characterId].values();
             for (uint256 j = 0; j < operators.length; ++j) {
-                OperatorLogic.grantOperatorPermissions(
+                _setOperatorPermissions(
                     characterId,
                     operators[j],
-                    permissionBitMap,
-                    _operatorsByCharacter,
-                    _operatorsPermissionBitMap
+                    OP.OPERATOR_SYNC_PERMISSION_BITMAP
                 );
             }
         }
