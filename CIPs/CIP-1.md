@@ -16,7 +16,7 @@ Crossbell is an open platform that needs to iterate and grow. CIPs should descri
 There are two types of CIP:
 
 - A **Meta CIP** include procedures, guidelines, changes to the decision-making process.
-- A **Standards Track CIP** describes primary changes of Crossbell that affects most or all Crossbell implementations, including protocol changes, application changes and changes in nework configurations.
+- A **Standards Track CIP** describes primary changes of Crossbell that affects most or all Crossbell implementations, including protocol changes, application changes and changes in network configurations.
   Furthermore, Standards Track CIPs can be broken down into the following categories:
   - **Protocol**: includes improvements and modifications in protocols, mostly in the form of smart contracts modifications and additions.
   - **Networking**: includes modifications in network configuarations, such as—a change to the block gas rules and a modification of consensus mechanism.
