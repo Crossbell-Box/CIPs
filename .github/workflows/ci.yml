@@ -1,0 +1,23 @@
+name: CodeSpell
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  codespell:
+    name: CodeSpell
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout CIP Repository
+      - uses: actions/checkout@v3
+
+      - name: Run CodeSpell
+        uses: codespell-project/actions-codespell@v1.0
+        with:
+          check_filenames: true
+          ignore_words_file: .codespellignore
+          skip: .git,**/*.png,**/*.gif,**/*.jpg,**/*.svg,.codespellignore
