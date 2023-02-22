@@ -240,7 +240,7 @@ function linkERC721(DataTypes.linkERC721Data calldata vars) external
 | Struct Member Name | Type | Description |
 | --- | --- | --- |
 | fromCharacterId | uint256 | The character Id to sponsor an link action  |
-| tokenAddress | addres | The token address of ERC721 to link |
+| tokenAddress | address | The token address of ERC721 to link |
 | tokenId | uint256 | The token id of ERC721 to link |
 | linkType | bytes32 | linkType, like “follow” |
 | data | bytes | The data to pass to the link module, if any |
@@ -256,7 +256,7 @@ function unlinkERC721(DataTypes.unlinkERC721Data calldata vars) external
 | Struct Member Name | Type | Description |
 | --- | --- | --- |
 | fromCharacterId | uint256 | The character Id to sponsor an unlink action  |
-| tokenAddress | addres | The token address of ERC721 to unlink |
+| tokenAddress | address | The token address of ERC721 to unlink |
 | tokenId | uint256 | The token id of ERC721 to unlink |
 | linkType | bytes32 | linkType, like “follow” |
 

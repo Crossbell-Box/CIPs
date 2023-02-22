@@ -80,7 +80,7 @@ Considering the character on Crossbell could be edited by not only one applicati
 
 Typically avatars and banners uses media resources. For better rendering experience in the front end, `mime_type` and `size_in_bytes` could be useful for a media resource. Websites are typically supposed to be resources in `text/html` type.
 
-`connected_accounts` are account resources, supposed to be in URI specification we defined above, e.g. `csb://acount:Atlasoin@twitter`
+`connected_accounts` are account resources, supposed to be in URI specification we defined above, e.g. `csb://account:Atlasoin@twitter`
 
 `connected_avatars` is useful when user wants to pick some ones from his own NFTs to be his avatars. So typically `connected_avatars` are asset resources, supposed to be in URI specification we defined above, e.g. `csb://asset:0x5452c7fb99d99fab3cc1875e9da9829cb50f7a13-753@ethereum`. Considering it might be inconvenient to interpret the image URL behind the NFT at each time, we introduce the `cached_resource` to cache the URL of the real media resource used for the avatar.
 

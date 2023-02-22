@@ -1,6 +1,6 @@
 ---
 CIP: 3
-title: Detailed Defination of Crossbell Protocol
+title: Detailed Definition of Crossbell Protocol
 status: Living
 type: Standards Track CIP(Protocol)
 created: 2022-7-26
