@@ -183,11 +183,16 @@ Here’s an example:
 
 ```tsx
 {
-    "tags": ['article', 'dairy'],
-    "title": "My Thoughts Start From Here",
-    "content": "So boring the story is.\n\nSo boring that I don’t want to know the next.",
-    "external_urls": ['https://xlog.app/xxxxxx'],
-    "sources": ['xlog']
+	"tags": ["CrossSync", "Twitter"],
+	"title": "My Thoughts Start From Here",
+	"content": "So boring the story is.\n\nSo boring that I don’t want to know the next.",
+	"external_urls": ["https://xlog.app/xxxxxx"],
+	"attachments": [{
+		"address": "ipfs://bafkreihqxcg3nngixxxyxcyyfy4kuyho3dizvmlqahabcu7fwfa7vnikii",
+		"mime_type": "image/jpeg",
+		"size_in_bytes": 2111
+	}],
+	"sources": ["xlog"]
 }
 ```
 
